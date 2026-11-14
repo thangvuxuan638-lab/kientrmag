@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f6feb'/%3E%3Ctext x='16' y='22' font-size='15' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'%3EAG%3C/text%3E%3C/svg%3E">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AGRI ERP · SCADA HMI khí hậu phòng</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ================= ICON SPRITE ================= -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10.3 21a2 2 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 21h18"/><rect x="5" y="11" width="3.5" height="7" rx="1"/><rect x="10.2" y="6" width="3.5" height="12" rx="1"/><rect x="15.5" y="9" width="3.5" height="9" rx="1"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M20 4C10 4 4 9 4 16c0 2 1 4 3 4 7 0 13-6 13-16Z"/><path d="M4 20c2-6 6-9 11-11"/></symbol>
+  <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.6 2.3c-.7.4-1.1 1-1.1 1.7v.5"/><circle cx="12" cy="17" r=".7" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+  <symbol id="i-temp" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 1 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v6"/></symbol>
+  <symbol id="i-hum" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 10.5A6 6 0 0 1 6 13.5C6 9.5 12 3 12 3z"/></symbol>
+  <symbol id="i-fan" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><path d="M12 9.8c-.4-3.7 1-6.8 3.1-6.8 2 0 3 2.2 1.3 4.4-1.2 1.6-4.4 2.4-4.4 2.4ZM14.2 12c3.7-.4 6.8 1 6.8 3.1 0 2-2.2 3-4.4 1.3-1.6-1.2-2.4-4.4-2.4-4.4ZM12 14.2c.4 3.7-1 6.8-3.1 6.8-2 0-3-2.2-1.3-4.4 1.2-1.6 4.4-2.4 4.4-2.4ZM9.8 12C6.1 12.4 3 11 3 8.9c0-2 2.2-3 4.4-1.3C9 8.8 9.8 12 9.8 12Z"/></symbol>
+  <symbol id="i-pump" viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 10.5A6 6 0 0 1 6 13.5C6 9.5 12 3 12 3z"/><path d="M9 14.5c1.2 1 4.8 1 6 0"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.3 2.6 17.6A2 2 0 0 0 4.3 20.6h15.4a2 2 0 0 0 1.7-3L13.7 4.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 6.5-2.5 6.5-6 0-4.5-5.2-7.2-5.2-11.2 0 0-3.3 2.4-3.3 5.7 0 1.5.7 2.5.7 2.5S8.5 12 8.5 9.2c0 0-3 3-3 6.8 0 3.5 2.5 6 6.5 6z"/></symbol>
+  <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.5a9.5 9.5 0 0 1 13 0M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2 5.5"/><path d="M20 5v6h-6"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v11M7 10l5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5M7 9l5-5 5 5M4 20h16"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+
+<div id="app">
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo"><span></span></div>
+      <div class="brand-txt">
+        <b>AGRI ERP</b>
+        <small>SCADA · HMI khí hậu</small>
+      </div>
+    </div>
+
+    <nav class="nav-wrap">
+      <div class="nav-group">
+        <div class="nav-group-title">Tổng quan</div>
+        <button class="nav active" data-tab="dashboard">
+          <svg class="ic"><use href="#i-grid"></use></svg><span class="nav-label">Dashboard</span>
+        </button>
+        <button class="nav" data-tab="monitor">
+          <svg class="ic"><use href="#i-monitor"></use></svg><span class="nav-label">Giám sát</span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Vận hành</div>
+        <button class="nav" data-tab="alerts">
+          <svg class="ic"><use href="#i-bell"></use></svg><span class="nav-label">Cảnh báo</span>
+          <span class="nav-badge" id="navAlertBadge">0</span>
+        </button>
+        <button class="nav" data-tab="devices">
+          <svg class="ic"><use href="#i-cpu"></use></svg><span class="nav-label">Thiết bị</span>
+        </button>
+        <button class="nav" data-tab="connection">
+          <svg class="ic"><use href="#i-wifi"></use></svg><span class="nav-label">Kết nối</span>
+          <span class="nav-dot" id="navConnDot"></span>
+        </button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Quản trị</div>
+        <button class="nav" data-tab="reports">
+          <svg class="ic"><use href="#i-chart"></use></svg><span class="nav-label">Báo cáo</span>
+        </button>
+        <button class="nav" data-tab="settings">
+          <svg class="ic"><use href="#i-settings"></use></svg><span class="nav-label">Cài đặt</span>
+        </button>
+      </div>
+
+    </nav>
+
+    <div class="side-bottom">
+      <button class="sound-card" id="soundCard" type="button">
+        <span class="sound-ico"><svg class="ic"><use href="#i-sound"></use></svg></span>
+        <span class="sound-txt">
+          <b id="soundTitle">Bật âm thanh</b>
+          <small>Nhận bíp khi có cảnh báo khẩn cấp</small>
+        </span>
+        <span class="sound-switch" id="soundSwitch">Bật</span>
+      </button>
+
+      <div class="conn">
+        <span id="dot" class="dot"></span>
+        <span id="connText">Đang khởi động…</span>
+      </div>
+      <div class="ver">AGRI ERP · v3.0</div>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <!-- ================= TOPBAR ================= -->
+    <header class="topbar">
+      <div class="searchbox">
+        <svg class="ic"><use href="#i-search"></use></svg>
+        <input id="globalSearch" type="search" placeholder="Tìm kiếm cảnh báo, thiết bị..." autocomplete="off" aria-label="Tìm kiếm">
+        <span class="search-key">Ctrl K</span>
+        <div class="search-results hidden" id="searchResults"></div>
+      </div>
+
+      <div class="topbar-right">
+        <span class="online-chip"><i class="pulse"></i><span id="onlineChip">Trực tuyến</span></span>
+        <span class="latency-chip" id="latencyChip" title="Độ trễ Web ↔ Firebase">
+          <svg class="ic"><use href="#i-wifi"></use></svg><b id="latencyVal">--</b><em>ms</em>
+        </span>
+        <span class="clock" id="clock">--:--:--</span>
+        <button class="iconbtn" id="btnTopRefresh" title="Làm mới dữ liệu" aria-label="Làm mới">
+          <svg class="ic"><use href="#i-refresh"></use></svg>
+        </button>
+        <button class="iconbtn" id="btnBell" title="Cảnh báo" aria-label="Cảnh báo">
+          <svg class="ic"><use href="#i-bell"></use></svg>
+          <span class="badge" id="bellBadge">0</span>
+        </button>
+        <button class="iconbtn" id="btnHelp" title="Trợ giúp" aria-label="Trợ giúp">
+          <svg class="ic"><use href="#i-help"></use></svg>
+        </button>
+        <div class="avatar" title="Quản trị viên">AD</div>
+      </div>
+    </header>
+
+    <div class="estop-banner hidden" id="estopBanner" role="alert" aria-live="assertive">
+      <span class="eb-ico"><svg class="ic"><use href="#i-power"></use></svg></span>
+      <div class="eb-txt">
+        <b>E-STOP ĐANG KÍCH HOẠT</b>
+        <span id="estopBannerText">Toàn bộ quạt, bơm và đèn đã bị khóa. Giải phóng để tiếp tục vận hành.</span>
+      </div>
+      <span class="eb-since" id="estopSince">--:--:--</span>
+      <button class="btn eb-btn" id="btnReleaseBanner" type="button">
+        <svg class="ic"><use href="#i-check"></use></svg>Giải phóng E-STOP
+      </button>
+    </div>
+
+    <main>
+      <!-- ============================================================ -->
+      <!-- ========================= DASHBOARD ======================== -->
+      <!-- ============================================================ -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-title">
+          <div>
+            <h1>Dashboard</h1>
+            <p>Tổng quan vận hành phòng trồng · dữ liệu thời gian thực từ HMI.</p>
+          </div>
+          <div class="page-actions">
+            <span class="live-tag"><i></i><span id="liveUpdated">Đang chờ dữ liệu</span></span>
+          </div>
+        </div>
+
+        <!-- KPI -->
+        <div class="kpi-grid">
+          <article class="kpi">
+            <div class="kpi-top">
+              <span class="kpi-ico temp"><svg class="ic"><use href="#i-temp"></use></svg></span>
+              <span class="chip ok" id="tempChip">Bình thường</span>
+            </div>
+            <div class="kpi-label">Nhiệt độ</div>
+            <div class="kpi-value"><span id="kpiTemp">--</span><small>°C</small></div>
+            <div class="kpi-bar"><i id="tempBar"></i></div>
+            <div class="kpi-foot" id="tempSub">Ngưỡng bật quạt ≥ 32 °C</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-top">
+              <span class="kpi-ico hum"><svg class="ic"><use href="#i-hum"></use></svg></span>
+              <span class="chip ok" id="humChip">Bình thường</span>
+            </div>
+            <div class="kpi-label">Độ ẩm</div>
+            <div class="kpi-value"><span id="kpiHum">--</span><small>%</small></div>
+            <div class="kpi-bar"><i id="humBar"></i></div>
+            <div class="kpi-foot" id="humSub">Ngưỡng bật bơm &lt; 40 %RH</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-top">
+              <span class="kpi-ico fan"><svg class="ic"><use href="#i-fan"></use></svg></span>
+              <span class="chip mute" id="fanChip">CH2 · 0x0001</span>
+            </div>
+            <div class="kpi-label">Quạt làm mát</div>
+            <div class="kpi-value" id="kpiFan">OFF</div>
+            <div class="kpi-bar"><i id="fanBar"></i></div>
+            <div class="kpi-foot" id="fanSub">Relay CH2 · quạt 12V</div>
+          </article>
+
+          <article class="kpi">
+            <div class="kpi-top">
+              <span class="kpi-ico pump"><svg class="ic"><use href="#i-pump"></use></svg></span>
+              <span class="chip mute" id="pumpChip">CH1 · 0x0000</span>
+            </div>
+            <div class="kpi-label">Bơm phun sương</div>
+            <div class="kpi-value" id="kpiPump">OFF</div>
+            <div class="kpi-bar"><i id="pumpBar"></i></div>
+            <div class="kpi-foot" id="pumpSub">Relay CH1 · bơm MB370</div>
+          </article>
+        </div>
+
+        <!-- Luồng dữ liệu ERP ↔ HMI -->
+        <section class="sync-strip" id="syncStrip">
+          <div class="sync-strip-head">
+            <div class="ss-title">
+              <span class="ss-ico"><svg class="ic"><use href="#i-wifi"></use></svg></span>
+              <div><b>Luồng dữ liệu thời gian thực</b><small id="syncSub">Đang kiểm tra kết nối…</small></div>
+            </div>
+            <div class="ss-meta">
+              <span>Heartbeat <b id="syncHeartbeat">--</b></span>
+              <span>RTT <b id="syncLatency">--</b></span>
+              <span>ACK <b id="syncAck">--</b></span>
+            </div>
+          </div>
+
+          <div class="sync-path" id="syncPath">
+            <div class="sync-node" data-node="erp">
+              <span class="sn-ico"><svg class="ic"><use href="#i-monitor"></use></svg></span>
+              <div class="sn-txt"><b>ERP WEB</b><small>Trình duyệt</small></div>
+              <i class="sn-dot"></i>
+            </div>
+            <div class="sync-link" data-link="web"><span></span><em>HTTPS</em></div>
+            <div class="sync-node" data-node="fb">
+              <span class="sn-ico"><svg class="ic"><use href="#i-db"></use></svg></span>
+              <div class="sn-txt"><b>FIREBASE</b><small id="syncFbSub">RTDB</small></div>
+              <i class="sn-dot"></i>
+            </div>
+            <div class="sync-link" data-link="hmi"><span></span><em>2 giây</em></div>
+            <div class="sync-node" data-node="hmi">
+              <span class="sn-ico"><svg class="ic"><use href="#i-cpu"></use></svg></span>
+              <div class="sn-txt"><b>HMI</b><small id="syncHmiSub">chờ heartbeat</small></div>
+              <i class="sn-dot"></i>
+            </div>
+            <div class="sync-link" data-link="modbus"><span></span><em>RS-485</em></div>
+            <div class="sync-node" data-node="modbus">
+              <span class="sn-ico"><svg class="ic"><use href="#i-bolt"></use></svg></span>
+              <div class="sn-txt"><b>MODBUS</b><small id="syncBusSub">SHTC30 · relay</small></div>
+              <i class="sn-dot"></i>
+            </div>
+          </div>
+
+          <button class="sync-detail" id="btnSyncDetail" type="button">
+            Chẩn đoán chi tiết<svg class="ic"><use href="#i-arrow"></use></svg>
+          </button>
+        </section>
+
+        <!-- Twin + side -->
+        <div class="dash-top">
+          <section class="panel twin-panel">
+            <div class="twin-tabs" role="tablist">
+              <button class="twin-tab active" data-view="twin" role="tab">
+                <svg class="ic"><use href="#i-grid"></use></svg>Digital Twin
+              </button>
+              <button class="twin-tab" data-view="chart" role="tab">
+                <svg class="ic"><use href="#i-chart"></use></svg>Environmental Monitoring Over Time
+              </button>
+            </div>
+
+            <div class="twin-head">
+              <div>
+                <h2>Digital Twin — Nhà trồng</h2>
+                <p>Mô hình realtime · SHTC30 / bơm phun sương / quạt / đèn halogen</p>
+              </div>
+              <div class="twin-tools">
+                <span class="tool-chip warn"><svg class="ic"><use href="#i-alert"></use></svg>Ngưỡng AUTO</span>
+                <span class="tool-chip"><svg class="ic"><use href="#i-monitor"></use></svg>Góc nhìn toàn cảnh</span>
+                <span class="tool-chip"><svg class="ic"><use href="#i-cpu"></use></svg>Relay 3 kênh</span>
+              </div>
+            </div>
+
+            <div id="viewTwin" class="twin-view">
+              <div class="twin-stage" id="twinStage">
+                <svg class="twin-svg" viewBox="0 0 1000 560" role="img" aria-label="Mô hình nhà trồng: bồn rau, bồn nước, bơm phun sương, quạt, đèn halogen và cảm biến SHTC30">
+                <defs>
+                  <linearGradient id="floorG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e9f4ec"/><stop offset="1" stop-color="#cde6d7"/>
+                  </linearGradient>
+                  <linearGradient id="wallL" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#dbe9f2"/><stop offset="1" stop-color="#c3d9e8"/>
+                  </linearGradient>
+                  <linearGradient id="wallR" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e9f4fa"/><stop offset="1" stop-color="#cfe4ef"/>
+                  </linearGradient>
+                  <linearGradient id="bedTop" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#8a6a4c"/><stop offset="1" stop-color="#6d5138"/>
+                  </linearGradient>
+                  <linearGradient id="bedSide" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e6eef6"/><stop offset="1" stop-color="#c9d8e5"/>
+                  </linearGradient>
+                  <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#bfe8fb"/><stop offset="1" stop-color="#84cdef"/>
+                  </linearGradient>
+                  <radialGradient id="blueGlow">
+                    <stop offset="0" stop-color="#60a5fa" stop-opacity=".95"/>
+                    <stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
+                  </radialGradient>
+                  <radialGradient id="lampGlow">
+                    <stop offset="0" stop-color="#fde68a" stop-opacity=".85"/>
+                    <stop offset="1" stop-color="#fbbf24" stop-opacity="0"/>
+                  </radialGradient>
+                  <linearGradient id="lampCone" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#fde68a" stop-opacity=".42"/>
+                    <stop offset="1" stop-color="#fde68a" stop-opacity="0"/>
+                  </linearGradient>
+                  <radialGradient id="heatGlow">
+                    <stop offset="0" stop-color="#fb923c" stop-opacity=".55"/>
+                    <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+                  </radialGradient>
+                  <filter id="blur8"><feGaussianBlur stdDeviation="8"/></filter>
+                  <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+                  <g id="sprout">
+                    <path d="M0 0v-21" stroke="#3f8f5a" stroke-width="2.4" stroke-linecap="round"/>
+                    <path d="M0 -9c-9-3-14-10-13-18 9 0 14 5 13 18z" fill="#5fbf7e"/>
+                    <path d="M0 -14c9-3 14-11 13-19-9 0-14 6-13 19z" fill="#3f9e63"/>
+                    <path d="M0 -20c-7-2-10-8-9-14 7 0 10 5 9 14z" fill="#83d69d"/>
+                  </g>
+                </defs>
+
+                <rect width="1000" height="560" fill="#f2f8f4"/>
+                <ellipse cx="500" cy="430" rx="420" ry="140" fill="#e2f0e7" opacity=".8"/>
+
+                <!-- sàn + lưới -->
+                <polygon points="80,400 480,250 880,400 480,550" fill="url(#floorG)"/>
+                <g stroke="#bcd8c7" stroke-width="1.2" opacity=".65">
+                  <path d="M160,360 560,510"/><path d="M240,320 640,470"/><path d="M320,280 720,430"/>
+                  <path d="M400,240 800,390"/><path d="M400,440 800,290"/><path d="M320,480 720,330"/>
+                  <path d="M240,520 640,370"/><path d="M160,560 560,410"/>
+                </g>
+
+                <!-- tường kính -->
+                <polygon points="80,400 480,250 480,150 80,300" fill="url(#wallL)"/>
+                <polygon points="480,250 880,400 880,300 480,150" fill="url(#wallR)"/>
+                <g stroke="#b7cddd" stroke-width="2.2" opacity=".85" fill="none">
+                  <path d="M80,300 480,150 880,300"/>
+                  <path d="M160,266 160,366"/><path d="M240,232 240,332"/><path d="M320,198 320,298"/><path d="M400,164 400,264"/>
+                  <path d="M560,164 560,264"/><path d="M640,198 640,298"/><path d="M720,232 720,332"/><path d="M800,266 800,366"/>
+                  <path d="M480,150V250"/>
+                </g>
+
+                <!-- bồn rau 1 -->
+                <g transform="translate(206,404)">
+                  <polygon points="0,0 150,75 240,30 90,-45" fill="url(#bedSide)"/>
+                  <polygon points="0,0 150,75 150,103 0,28" fill="#d3e0ec"/>
+                  <polygon points="150,75 240,30 240,58 150,103" fill="#bccddf"/>
+                  <polygon points="12,-2 146,68 228,28 94,-42" fill="url(#bedTop)"/>
+                  <polygon points="12,-2 146,68 150,74 16,4" fill="#a07f5d" opacity=".55"/>
+                  <g>
+                    <use href="#sprout" transform="translate(48,8)"/>
+                    <use href="#sprout" transform="translate(90,29)"/>
+                    <use href="#sprout" transform="translate(132,50)"/>
+                    <use href="#sprout" transform="translate(104,-18)"/>
+                    <use href="#sprout" transform="translate(146,3)"/>
+                    <use href="#sprout" transform="translate(188,24)"/>
+                  </g>
+                </g>
+
+                <!-- bồn rau 2 -->
+                <g transform="translate(486,436)">
+                  <polygon points="0,0 140,70 220,30 80,-40" fill="url(#bedSide)"/>
+                  <polygon points="0,0 140,70 140,96 0,26" fill="#d3e0ec"/>
+                  <polygon points="140,70 220,30 220,56 140,96" fill="#bccddf"/>
+                  <polygon points="12,-2 136,63 208,28 84,-37" fill="url(#bedTop)"/>
+                  <g>
+                    <use href="#sprout" transform="translate(42,4)"/>
+                    <use href="#sprout" transform="translate(84,25)"/>
+                    <use href="#sprout" transform="translate(126,46)"/>
+                    <use href="#sprout" transform="translate(96,-14)"/>
+                    <use href="#sprout" transform="translate(138,7)"/>
+                    <use href="#sprout" transform="translate(170,25)"/>
+                  </g>
+                </g>
+
+                <!-- bồn nước + đường ống -->
+                <g class="twin-tank">
+                  <ellipse cx="756" cy="352" rx="44" ry="18" fill="#d6ecf8" stroke="#9dc9e0" stroke-width="2"/>
+                  <path d="M712 352v72c0 10 20 18 44 18s44-8 44-18v-72" fill="url(#waterG)" stroke="#9dc9e0" stroke-width="2"/>
+                  <path d="M712 390c0 10 20 18 44 18s44-8 44-18" fill="none" stroke="#8fc4de" stroke-width="1.6" opacity=".85"/>
+                  <ellipse cx="756" cy="352" rx="30" ry="11" fill="#a5dbf5" opacity=".7"/>
+                  <text x="756" y="416" font-size="11" fill="#2f6d8c" text-anchor="middle" font-family="Segoe UI">BỒN NƯỚC</text>
+                  <path d="M756 442v22H470" fill="none" stroke="#8fc4de" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M756 442v22H470" fill="none" stroke="#c9e8f7" stroke-width="2" stroke-linecap="round"/>
+                </g>
+
+                <!-- bơm + sương -->
+                <g class="twin-pump">
+                  <ellipse cx="470" cy="474" rx="26" ry="9" fill="#1e293b" opacity=".1"/>
+                  <rect x="452" y="452" width="36" height="20" rx="5" fill="#38bdf8"/>
+                  <rect x="458" y="446" width="24" height="9" rx="3" fill="#0ea5e9"/>
+                  <circle cx="470" cy="462" r="4" fill="#e0f2fe"/>
+                  <g class="twin-mist">
+                    <circle cx="440" cy="446" r="7" fill="#bae6fd" opacity=".65"/>
+                    <circle cx="424" cy="432" r="6" fill="#bae6fd" opacity=".5"/>
+                    <circle cx="500" cy="446" r="6" fill="#bae6fd" opacity=".55"/>
+                  </g>
+                </g>
+
+                <!-- quạt treo tường -->
+                <g class="twin-fan">
+                  <path d="M196 318 214 310" stroke="#93aec4" stroke-width="6" stroke-linecap="round"/>
+                  <circle cx="238" cy="300" r="36" fill="#f8fbfe" stroke="#aec6da" stroke-width="3"/>
+                  <g class="twin-fan-blades" style="transform-origin:238px 300px">
+                    <path d="M238 300c-2-14 2-28 12-31 9-3 15 5 12 15-3 10-14 16-24 16z" fill="#8fb4d0"/>
+                    <path d="M238 300c14-2 28 2 31 12 3 9-5 15-15 12-10-3-16-14-16-24z" fill="#a7c6dc"/>
+                    <path d="M238 300c2 14-2 28-12 31-9 3-15-5-12-15 3-10 14-16 24-16z" fill="#8fb4d0"/>
+                    <path d="M238 300c-14 2-28-2-31-12-3-9 5-15 15-12 10 3 16 14 16 24z" fill="#a7c6dc"/>
+                  </g>
+                  <circle cx="238" cy="300" r="5" fill="#5f89a8"/>
+                </g>
+
+                <!-- đèn halogen -->
+                <g class="twin-lamp">
+                  <path d="M330 198V262" stroke="#9fb4c6" stroke-width="2.5"/>
+                  <path d="M310 262h40l-8 20h-24z" fill="#64748b"/>
+                  <polygon points="318,286 342,286 410,452 250,452" fill="url(#lampCone)" class="lamp-cone"/>
+                  <circle cx="330" cy="286" r="28" fill="url(#lampGlow)" class="lamp-halo"/>
+                  <ellipse cx="330" cy="284" rx="12" ry="5" fill="#fde68a"/>
+                </g>
+                <g class="twin-lamp">
+                  <path d="M648 210V268" stroke="#9fb4c6" stroke-width="2.5"/>
+                  <path d="M628 268h40l-8 20h-24z" fill="#64748b"/>
+                  <polygon points="636,292 660,292 720,436 576,436" fill="url(#lampCone)" class="lamp-cone"/>
+                  <circle cx="648" cy="292" r="28" fill="url(#lampGlow)" class="lamp-halo"/>
+                  <ellipse cx="648" cy="290" rx="12" ry="5" fill="#fde68a"/>
+                </g>
+
+                <!-- cảm biến SHTC30 -->
+                <g class="twin-sensor">
+                  <circle cx="800" cy="286" r="24" fill="url(#blueGlow)"/>
+                  <rect x="784" y="268" width="34" height="26" rx="6" fill="#ffffff" stroke="#bfd7ea" stroke-width="2"/>
+                  <circle cx="801" cy="278" r="3" fill="#3b82f6"/>
+                  <path d="M791 287h20" stroke="#cbd5e1" stroke-width="2.5" stroke-linecap="round"/>
+                  <text x="801" y="312" font-size="9.5" fill="#4a6c86" text-anchor="middle" font-family="Segoe UI">SHTC30</text>
+                </g>
+
+                <!-- vùng nhiệt cao -->
+                <g id="twinHeat" class="hidden">
+                  <ellipse cx="430" cy="404" rx="190" ry="92" fill="url(#heatGlow)" filter="url(#blur8)"/>
+                </g>
+
+                <!-- người chăm vườn -->
+                <g class="worker">
+                  <ellipse cx="596" cy="492" rx="13" ry="5" fill="#1e293b" opacity=".12"/>
+                  <path d="M590 470h13l4 22h-21z" fill="#2f6bf0"/>
+                  <circle cx="597" cy="462" r="7" fill="#f2c08a"/>
+                  <path d="M588 458c2-6 16-6 18 0z" fill="#eab308"/>
+                  <path d="M589 461h16" stroke="#d9a441" stroke-width="2"/>
+                  <path d="M603 473l10 8" stroke="#f2c08a" stroke-width="3.5" stroke-linecap="round"/>
+                  <rect x="610" y="478" width="14" height="10" rx="3" fill="#22c55e"/>
+                </g>
+
+                </svg>
+
+                <!-- chip dữ liệu trên mô hình -->
+                <div class="twin-chip chip-tl">
+                  <div class="tc-row"><svg class="ic"><use href="#i-temp"></use></svg><span id="twinTemp">-- °C</span></div>
+                  <div class="tc-row"><svg class="ic"><use href="#i-hum"></use></svg><span id="twinHum">-- %</span></div>
+                </div>
+                <div class="twin-chip chip-tr">
+                  <span class="tc-dot" id="twinSensorDot"></span>
+                  <span id="twinSensorText">SHTC30 · chờ dữ liệu</span>
+                </div>
+                <div class="twin-chip chip-bl">
+                  <span class="mini-pill" id="twinFanPill">Quạt OFF</span>
+                  <span class="mini-pill" id="twinPumpPill">Bơm OFF</span>
+                  <span class="mini-pill" id="twinLampPill">Đèn OFF</span>
+                </div>
+                <div class="twin-chip chip-br" id="twinUpdated">Cập nhật --:--:--</div>
+              </div>
+            </div>
+
+            <div id="viewChart" class="twin-view hidden">
+              <div class="chart-head">
+                <div>
+                  <b>Environmental Monitoring Over Time</b>
+                  <small>60 điểm gần nhất · trục trái %RH · trục phải °C</small>
+                </div>
+                <div class="legend">
+                  <span><i class="lg hum"></i>Độ ẩm</span>
+                  <span><i class="lg temp"></i>Nhiệt độ</span>
+                </div>
+              </div>
+              <canvas id="chart"></canvas>
+            </div>
+          </section>
+
+          <div class="dash-side">
+            <section class="panel health-panel">
+              <div class="panel-head">
+                <div><h2>System Health</h2><p>Sức khỏe hệ thống</p></div>
+                <span class="chip ok" id="healthChip">Ổn định</span>
+              </div>
+              <div class="health-grid">
+                <div class="health-tile">
+                  <span class="ht-label">RS-485</span>
+                  <span class="ht-value"><i class="ht-dot ok" id="hRs"></i><b id="healthRs">OK</b></span>
+                </div>
+                <div class="health-tile">
+                  <span class="ht-label">Firebase</span>
+                  <span class="ht-value"><i class="ht-dot ok" id="hFb"></i><b id="healthFb">Trực tuyến</b></span>
+                </div>
+                <div class="health-tile">
+                  <span class="ht-label">Failsafe</span>
+                  <span class="ht-value"><i class="ht-dot ok" id="hFail"></i><b id="healthFail">Bình thường</b></span>
+                </div>
+                <div class="health-tile">
+                  <span class="ht-label">Chế độ</span>
+                  <span class="ht-value"><i class="ht-dot info" id="hMode"></i><b id="healthMode">AUTO</b></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel alerts-panel">
+              <div class="panel-head">
+                <div><h2>Cảnh báo gần đây</h2><p id="dashAlertCount">0 cảnh báo</p></div>
+                <button class="link-btn" id="btnAllAlerts">Xem tất cả<svg class="ic"><use href="#i-arrow"></use></svg></button>
+              </div>
+              <div class="alert-list compact" id="dashAlerts">
+                <div class="empty">Chưa có cảnh báo</div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Điều khiển -->
+        <section class="panel control-panel">
+          <div class="panel-head">
+            <div>
+              <h2>Điều khiển từ xa</h2>
+              <p class="chain-text">ERP <span>→</span> FIREBASE <span>→</span> HMI <span>→</span> MODBUS RELAY</p>
+            </div>
+            <span class="chip ok" id="chainState">Sẵn sàng</span>
+          </div>
+
+          <div class="control-grid">
+            <div class="control-main">
+              <div class="control-block">
+                <div class="block-label">Chế độ vận hành</div>
+                <div class="seg" id="modeSeg">
+                  <button class="seg-btn active" data-mode="AUTO"><svg class="ic"><use href="#i-bolt"></use></svg>AUTO</button>
+                  <button class="seg-btn" data-mode="MANUAL"><svg class="ic"><use href="#i-user"></use></svg>MANUAL</button>
+                </div>
+                <p class="block-hint" id="modeHint">HMI tự điều khiển theo ngưỡng nhiệt độ / độ ẩm.</p>
+              </div>
+
+              <div class="control-block">
+                <div class="block-label">An toàn</div>
+                <div class="safety-row">
+                  <button class="btn-estop" id="btnEstop" type="button">
+                    <span class="estop-ico"><svg class="ic"><use href="#i-power"></use></svg></span>E-STOP
+                  </button>
+                  <button class="btn-release" id="btnRelease" type="button">
+                    <svg class="ic"><use href="#i-check"></use></svg>Giải phóng
+                  </button>
+                  <span class="estop-state" id="estopState">Hệ thống an toàn</span>
+                </div>
+              </div>
+
+              <div class="ack-row">
+                <div>
+                  <div class="block-label">ACK điều khiển</div>
+                  <p id="ackState">Chưa có lệnh.</p>
+                </div>
+                <button class="btn ghost" id="btnAck" type="button">
+                  <svg class="ic"><use href="#i-check"></use></svg>ACK
+                </button>
+              </div>
+            </div>
+
+            <div class="control-actuators">
+              <div class="block-label">Cơ cấu chấp hành</div>
+              <div class="actuator-row">
+                <div class="actuator">
+                  <button class="toggle" id="fanToggle" type="button" aria-pressed="false">
+                    <span class="toggle-ico"><svg class="ic"><use href="#i-fan"></use></svg></span>
+                    <span class="toggle-txt" id="fanToggleLabel">OFF</span>
+                    <span class="toggle-knob"></span>
+                  </button>
+                  <span class="act-name"><i class="act-dot" id="fanDot"></i>QUẠT</span>
+                </div>
+                <div class="actuator">
+                  <button class="toggle" id="pumpToggle" type="button" aria-pressed="false">
+                    <span class="toggle-ico"><svg class="ic"><use href="#i-pump"></use></svg></span>
+                    <span class="toggle-txt" id="pumpToggleLabel">OFF</span>
+                    <span class="toggle-knob"></span>
+                  </button>
+                  <span class="act-name"><i class="act-dot" id="pumpDot"></i>BƠM</span>
+                </div>
+                <div class="actuator">
+                  <button class="toggle" id="lampToggle" type="button" aria-pressed="false">
+                    <span class="toggle-ico"><svg class="ic"><use href="#i-bolt"></use></svg></span>
+                    <span class="toggle-txt" id="lampToggleLabel">OFF</span>
+                    <span class="toggle-knob"></span>
+                  </button>
+                  <span class="act-name"><i class="act-dot" id="lampDot"></i>ĐÈN</span>
+                </div>
+              </div>
+              <p class="block-hint" id="actuatorHint">Chuyển MANUAL để điều khiển thủ công.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Load distribution -->
+        <section class="panel load-panel">
+          <div class="panel-head">
+            <div><h2>Load Distribution by Actuator</h2><p>Phân bổ tải theo cơ cấu chấp hành</p></div>
+            <span class="chip mute" id="loadStamp">--</span>
+          </div>
+          <div class="load-list">
+            <div class="load-row">
+              <div class="load-top"><span>Nhiệt độ <em>(SHTC30)</em></span><b id="loadTempVal">--</b></div>
+              <div class="load-track"><i id="loadTemp" class="fill temp"></i></div>
+            </div>
+            <div class="load-row">
+              <div class="load-top"><span>Độ ẩm <em>(SHTC30)</em></span><b id="loadHumVal">--</b></div>
+              <div class="load-track"><i id="loadHum" class="fill hum"></i></div>
+            </div>
+            <div class="load-row">
+              <div class="load-top"><span>Quạt làm mát <em>(CH2)</em></span><b id="loadFanVal">OFF</b></div>
+              <div class="load-track"><i id="loadFan" class="fill fan"></i></div>
+            </div>
+            <div class="load-row">
+              <div class="load-top"><span>Bơm phun sương <em>(CH1)</em></span><b id="loadPumpVal">OFF</b></div>
+              <div class="load-track"><i id="loadPump" class="fill pump"></i></div>
+            </div>
+            <div class="load-row">
+              <div class="load-top"><span>Đèn halogen <em>(CH3)</em></span><b id="loadLampVal">OFF</b></div>
+              <div class="load-track"><i id="loadLamp" class="fill lamp"></i></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= GIÁM SÁT ========================= -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-monitor">
+        <div class="page-title">
+          <div>
+            <h1>Giám sát</h1>
+            <p>Lịch sử telemetry mới nhất từ SHTC30 · cập nhật mỗi 2 giây.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn ghost" id="btnMonRefresh"><svg class="ic"><use href="#i-refresh"></use></svg>Làm mới</button>
+            <button class="btn" id="btnMonExport"><svg class="ic"><use href="#i-download"></use></svg>Xuất CSV</button>
+          </div>
+        </div>
+
+        <div class="stat-row four">
+          <div class="stat"><span>ĐIỂM DỮ LIỆU</span><b id="monCount">0</b><small>Trong bộ đệm</small></div>
+          <div class="stat"><span>CẬP NHẬT CUỐI</span><b id="monLast">--:--:--</b><small id="monLastDate">--</small></div>
+          <div class="stat ok"><span>CHU KỲ</span><b>2 giây</b><small>HMI → Firebase</small></div>
+          <div class="stat"><span>THIẾT BỊ</span><b id="monDevice">vuon-1</b><small>Mã HMI</small></div>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Telemetry</h2><p>Bảng dữ liệu mới nhất ở trên cùng</p></div>
+            <div class="table-tools">
+              <label class="mini-search">
+                <svg class="ic"><use href="#i-search"></use></svg>
+                <input id="monFilter" type="search" placeholder="Lọc theo trạng thái...">
+              </label>
+            </div>
+          </div>
+          <div class="tablewrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Thời gian</th><th class="num">Nhiệt độ</th><th class="num">Độ ẩm</th>
+                  <th>Quạt</th><th>Bơm</th><th>Đèn</th><th>Chế độ</th><th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody id="monBody"></tbody>
+            </table>
+          </div>
+          <div class="empty" id="monEmpty">Chưa có dữ liệu telemetry.</div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= CẢNH BÁO ========================= -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-alerts">
+        <div class="page-title">
+          <div>
+            <h1>Cảnh báo</h1>
+            <p>Theo dõi sự kiện nhiệt độ, độ ẩm và tình trạng thiết bị trong phòng trồng.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn ghost" id="btnAckAll"><svg class="ic"><use href="#i-check"></use></svg>ACK tất cả</button>
+          </div>
+        </div>
+
+        <div class="stat-row four">
+          <div class="stat"><span>TỔNG CẢNH BÁO</span><b id="alertStatTotal">0</b><small>Toàn bộ lịch sử</small></div>
+          <div class="stat warn"><span>CHƯA ACK</span><b id="alertStatOpen">0</b><small>Cần xử lý</small></div>
+          <div class="stat bad"><span>NHIỆT ĐỘ CAO</span><b id="alertStatHeat">0</b><small>Vượt ngưỡng quạt</small></div>
+          <div class="stat ok"><span>ĐÃ ACK</span><b id="alertStatAck">0</b><small>Đã xác nhận</small></div>
+        </div>
+
+        <div class="filter-row" id="alertFilters">
+          <button class="filter-chip active" data-filter="all">Tất cả</button>
+          <button class="filter-chip" data-filter="heat"><svg class="ic"><use href="#i-temp"></use></svg>Nhiệt độ</button>
+          <button class="filter-chip" data-filter="cold"><svg class="ic"><use href="#i-shield"></use></svg>Sưởi ấm</button>
+          <button class="filter-chip" data-filter="hum"><svg class="ic"><use href="#i-hum"></use></svg>Độ ẩm</button>
+          <button class="filter-chip" data-filter="system"><svg class="ic"><use href="#i-cpu"></use></svg>Hệ thống</button>
+        </div>
+
+        <section class="panel alert-panel">
+          <div class="alert-list" id="alertList">
+            <div class="empty">Chưa có cảnh báo</div>
+          </div>
+          <div class="empty" id="alertEmpty">Không có cảnh báo phù hợp.</div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= THIẾT BỊ ========================= -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-devices">
+        <div class="page-title">
+          <div>
+            <h1>Thiết bị</h1>
+            <p>Danh sách thiết bị trong hệ thống SCADA và trạng thái kết nối.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn ghost" id="btnDevRefresh"><svg class="ic"><use href="#i-refresh"></use></svg>Quét lại</button>
+          </div>
+        </div>
+
+        <div class="device-grid">
+          <article class="device-card">
+            <div class="device-head">
+              <span class="device-ico sensor"><svg class="ic"><use href="#i-hum"></use></svg></span>
+              <span class="chip ok" id="devSensorChip">Trực tuyến</span>
+            </div>
+            <h3>SHTC30</h3>
+            <p>Cảm biến nhiệt độ / độ ẩm không khí</p>
+            <dl>
+              <div><dt>Địa chỉ</dt><dd>Slave 1 · 0x01</dd></div>
+              <div><dt>Giao thức</dt><dd>RS-485 · 9600 8N1</dd></div>
+              <div><dt>Giá trị</dt><dd id="devSensorValue">--</dd></div>
+            </dl>
+          </article>
+
+          <article class="device-card">
+            <div class="device-head">
+              <span class="device-ico relay"><svg class="ic"><use href="#i-cpu"></use></svg></span>
+              <span class="chip ok" id="devRelayChip">Trực tuyến</span>
+            </div>
+            <h3>Relay 3 kênh</h3>
+            <p>Module relay Modbus · CH1 bơm · CH2 quạt · CH3 đèn</p>
+            <dl>
+              <div><dt>Địa chỉ</dt><dd>Slave 255 · 0xFF</dd></div>
+              <div><dt>Chức năng</dt><dd>FC05 · chỉ ghi</dd></div>
+              <div><dt>Trạng thái</dt><dd id="devRelayValue">CH1 OFF · CH2 OFF · CH3 OFF</dd></div>
+            </dl>
+          </article>
+
+          <article class="device-card">
+            <div class="device-head">
+              <span class="device-ico bridge"><svg class="ic"><use href="#i-monitor"></use></svg></span>
+              <span class="chip ok" id="devBridgeChip">Trực tuyến</span>
+            </div>
+            <h3>HMI Bridge</h3>
+            <p>Laptop vận hành · Python + PyQt5</p>
+            <dl>
+              <div><dt>Thiết bị</dt><dd id="devBridgeId">vuon-1</dd></div>
+              <div><dt>Đồng bộ</dt><dd>2 giây / lần</dd></div>
+              <div><dt>Cập nhật</dt><dd id="devLastSeen">--</dd></div>
+            </dl>
+          </article>
+
+          <article class="device-card">
+            <div class="device-head">
+              <span class="device-ico cloud"><svg class="ic"><use href="#i-db"></use></svg></span>
+              <span class="chip ok" id="devFbChip">Trực tuyến</span>
+            </div>
+            <h3>Firebase RTDB</h3>
+            <p>Đồng bộ đám mây giữa ERP và HMI</p>
+            <dl>
+              <div><dt>Region</dt><dd>asia-southeast1</dd></div>
+              <div><dt>Nhánh</dt><dd>hmi</dd></div>
+              <div><dt>Kết nối</dt><dd id="devFbValue">--</dd></div>
+            </dl>
+          </article>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Kênh relay</h2><p>Điều khiển trực tiếp từng kênh (FC05)</p></div>
+            <span class="chip mute">Slave 255</span>
+          </div>
+          <div class="tablewrap">
+            <table class="relay-table">
+              <thead>
+                <tr><th>Kênh</th><th>Chức năng</th><th>Địa chỉ coil</th><th>Trạng thái</th><th class="right">Điều khiển</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>CH1</b></td><td>Bơm phun sương MB370</td><td>0x0000</td>
+                  <td><span class="state-pill" id="ch1State">OFF</span></td>
+                  <td class="right"><button class="btn small ghost" id="ch1Toggle">Bật / Tắt</button></td>
+                </tr>
+                <tr>
+                  <td><b>CH2</b></td><td>Quạt làm mát 12V</td><td>0x0001</td>
+                  <td><span class="state-pill" id="ch2State">OFF</span></td>
+                  <td class="right"><button class="btn small ghost" id="ch2Toggle">Bật / Tắt</button></td>
+                </tr>
+                <tr>
+                  <td><b>CH3</b></td><td>Đèn halogen sưởi ấm</td><td>0x0002</td>
+                  <td><span class="state-pill" id="ch3State">OFF</span></td>
+                  <td class="right"><button class="btn small ghost" id="ch3Toggle">Bật / Tắt</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= KẾT NỐI ========================== -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-connection">
+        <div class="page-title">
+          <div>
+            <h1>Kết nối &amp; đồng bộ</h1>
+            <p>Chẩn đoán luồng ERP → Firebase → HMI → Modbus, đối chiếu cấu hình và ACK lệnh.</p>
+          </div>
+          <div class="page-actions">
+            <span class="chip mute" id="connUpdated">Đang tải…</span>
+            <button class="btn ghost" id="btnConnRefresh"><svg class="ic"><use href="#i-refresh"></use></svg>Làm mới</button>
+            <button class="btn" id="btnConnPing"><svg class="ic"><use href="#i-wifi"></use></svg>Kiểm tra</button>
+          </div>
+        </div>
+
+        <div class="stat-row four">
+          <div class="stat">
+            <span>HEARTBEAT HMI</span>
+            <b id="connHb">--</b>
+            <small id="connHbSub">Chưa có tín hiệu</small>
+          </div>
+          <div class="stat">
+            <span>RTT WEB ↔ FIREBASE</span>
+            <b id="connRtt">--</b>
+            <small id="connRttSub">Chưa đo</small>
+          </div>
+          <div class="stat ok">
+            <span>HMI UPTIME</span>
+            <b id="connUptime">--</b>
+            <small id="connUptimeSub">Từ heartbeat</small>
+          </div>
+          <div class="stat">
+            <span>PHIÊN BẢN / THIẾT BỊ</span>
+            <b id="connVersion">--</b>
+            <small id="connVersionSub">--</small>
+          </div>
+        </div>
+
+        <section class="panel topo-panel">
+          <div class="panel-head">
+            <div><h2>Sơ đồ kết nối</h2><p>Trạng thái từng chặng, cập nhật mỗi 2 giây</p></div>
+            <span class="chip warn" id="connTopoChip">Đang kiểm tra</span>
+          </div>
+
+          <div class="topo-grid">
+            <div class="topo-node" id="topoErp">
+              <span class="tn-ico erp"><svg class="ic"><use href="#i-monitor"></use></svg></span>
+              <div class="tn-body">
+                <b>ERP WEB</b>
+                <span id="topoErpVal">Trình duyệt hiện tại</span>
+                <em>HTTPS · fetch API</em>
+              </div>
+              <i class="tn-dot"></i>
+            </div>
+
+            <div class="topo-link" id="linkWeb">
+              <span class="tl-line"><i></i></span>
+              <em>HTTPS</em>
+            </div>
+
+            <div class="topo-node" id="topoFb">
+              <span class="tn-ico fb"><svg class="ic"><use href="#i-db"></use></svg></span>
+              <div class="tn-body">
+                <b>FIREBASE RTDB</b>
+                <span id="topoFbVal">Chưa kết nối</span>
+                <em>hmi/<span id="topoPath">vuon-1</span></em>
+              </div>
+              <i class="tn-dot"></i>
+            </div>
+
+            <div class="topo-link" id="linkHmi">
+              <span class="tl-line"><i></i></span>
+              <em>2 giây</em>
+            </div>
+
+            <div class="topo-node" id="topoHmi">
+              <span class="tn-ico hmi"><svg class="ic"><use href="#i-cpu"></use></svg></span>
+              <div class="tn-body">
+                <b>HMI BRIDGE</b>
+                <span id="topoHmiVal">Chờ heartbeat</span>
+                <em>PyQt5 · hmi-2.0</em>
+              </div>
+              <i class="tn-dot"></i>
+            </div>
+
+            <div class="topo-link" id="linkBus">
+              <span class="tl-line"><i></i></span>
+              <em>RS-485</em>
+            </div>
+
+            <div class="topo-node" id="topoBus">
+              <span class="tn-ico bus"><svg class="ic"><use href="#i-bolt"></use></svg></span>
+              <div class="tn-body">
+                <b>MODBUS BUS</b>
+                <span id="topoBusVal">Chưa có dữ liệu</span>
+                <em>SHTC30 · relay 3 kênh</em>
+              </div>
+              <i class="tn-dot"></i>
+            </div>
+          </div>
+
+          <div class="topo-foot">
+            <span>Thiết bị <b id="connProfile">vuon-1</b></span>
+            <span>Nhịp đồng bộ <b>2,0 s</b></span>
+            <span>Nhánh dữ liệu <code id="connPath">hmi/vuon-1</code></span>
+            <span>Chế độ <b id="connMode">--</b></span>
+          </div>
+        </section>
+
+        <div class="conn-grid">
+          <div class="conn-col">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Lệnh &amp; cấu hình</h2><p>Đối chiếu seq giữa ERP và ACK của HMI</p></div>
+                <span class="chip mute" id="connAckChip">Chưa có ACK</span>
+              </div>
+
+              <div class="ack-cards">
+                <div class="ack-card" id="connCmdCard">
+                  <span class="ac-label">LỆNH ĐIỀU KHIỂN</span>
+                  <b id="connCmdState">Chưa gửi lệnh</b>
+                  <small id="connCmdMeta">SEQ -- · --</small>
+                </div>
+                <div class="ack-card" id="connCfgCard">
+                  <span class="ac-label">CẤU HÌNH NGƯỠNG</span>
+                  <b id="connCfgState">Chưa đồng bộ</b>
+                  <small id="connCfgMeta">SEQ -- · --</small>
+                </div>
+              </div>
+
+              <div class="conn-actions">
+                <button class="btn ghost small" id="btnConnAuto"><svg class="ic"><use href="#i-bolt"></use></svg>Về AUTO</button>
+                <button class="btn ghost small" id="btnConnSync"><svg class="ic"><use href="#i-db"></use></svg>Đồng bộ ngưỡng</button>
+                <button class="btn-estop small" id="btnConnEstop" type="button">
+                  <span class="estop-ico"><svg class="ic"><use href="#i-power"></use></svg></span>E-STOP
+                </button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>So sánh cấu hình</h2><p>Giá trị ERP đang đặt và giá trị HMI đang áp dụng</p></div>
+                <span class="chip mute" id="cfgCompareChip">--</span>
+              </div>
+              <div class="tablewrap">
+                <table class="cfg-table">
+                  <thead>
+                    <tr><th>Thông số</th><th class="num">ERP</th><th class="num">HMI</th><th class="right">Trạng thái</th></tr>
+                  </thead>
+                  <tbody id="cfgCompareBody"></tbody>
+                </table>
+              </div>
+              <p class="block-hint" id="cfgCompareHint">Bấm “Đồng bộ ngưỡng” để đẩy cấu hình ERP xuống HMI.</p>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Nhật ký HMI</h2><p>Log INFO / OK / WARN / ERROR từ thiết bị</p></div>
+                <button class="link-btn" id="btnConnLogs"><svg class="ic"><use href="#i-refresh"></use></svg>Tải lại</button>
+              </div>
+              <div class="log-console" id="connLogs">
+                <div class="log-empty">Chưa tải nhật ký.</div>
+              </div>
+            </section>
+          </div>
+
+          <div class="conn-col">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Chất lượng kết nối</h2><p>RTT Web ↔ Firebase và nhịp heartbeat HMI</p></div>
+                <span class="chip ok" id="connQualityChip">--</span>
+              </div>
+              <canvas id="connLatency" class="latency-chart"></canvas>
+              <div class="conn-meta-grid">
+                <div><span>RTT hiện tại</span><b id="connLatStat">--</b></div>
+                <div><span>RTT trung bình</span><b id="connLatAvg">--</b></div>
+                <div><span>Heartbeat</span><b id="connHbStat">--</b></div>
+                <div><span>Lỗi liên tiếp</span><b id="connFailStat">0</b></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Sự kiện ACK</h2><p>Phản hồi lệnh điều khiển và cấu hình</p></div>
+                <span class="chip mute" id="connEventCount">0</span>
+              </div>
+              <div class="event-list" id="connEvents">
+                <div class="empty">Chưa có sự kiện.</div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Ghi chú kết nối</h2><p>Dùng khi cần kiểm tra nhanh tại nhà kính</p></div>
+              </div>
+              <ul class="conn-notes">
+                <li><b>HMI mất heartbeat &gt; 20 giây</b> — kiểm tra mạng laptop và nút “BẬT ĐỒNG BỘ” trên HMI.</li>
+                <li><b>Lệnh gửi nhưng không có ACK</b> — HMI đang tắt, sai mã thiết bị, hoặc Rules Firebase chặn ghi.</li>
+                <li><b>Cấu hình lệch</b> — bấm “Đồng bộ ngưỡng”, HMI sẽ trả <code>config_ack</code> kèm giá trị đã áp dụng.</li>
+                <li><b>E-STOP</b> — khóa toàn bộ đầu ra; luôn kiểm tra hiện trường trước khi giải phóng.</li>
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= BÁO CÁO ========================== -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-reports">
+        <div class="page-title">
+          <div>
+            <h1>Báo cáo</h1>
+            <p>Thống kê vận hành và xuất dữ liệu telemetry / cảnh báo.</p>
+          </div>
+          <div class="page-actions">
+            <span class="chip mute" id="reportRange">Bộ đệm hiện tại</span>
+          </div>
+        </div>
+
+        <div class="report-grid">
+          <div class="report-stat">
+            <span class="rs-label">Nhiệt độ trung bình</span>
+            <b class="rs-value"><span id="repTempAvg">--</span><small>°C</small></b>
+            <span class="rs-sub" id="repTempRange">--</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Độ ẩm trung bình</span>
+            <b class="rs-value"><span id="repHumAvg">--</span><small>%</small></b>
+            <span class="rs-sub" id="repHumRange">--</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Thời gian hoạt động</span>
+            <b class="rs-value" id="repUptime">00:00</b>
+            <span class="rs-sub">Phiên hiện tại</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Điểm dữ liệu</span>
+            <b class="rs-value" id="repPoints">0</b>
+            <span class="rs-sub">Trong bộ đệm</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Quạt chạy</span>
+            <b class="rs-value blue" id="repFanPct">0%</b>
+            <span class="rs-sub">Tỉ lệ thời gian ON</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Bơm chạy</span>
+            <b class="rs-value red" id="repPumpPct">0%</b>
+            <span class="rs-sub">Tỉ lệ thời gian ON</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Nhiệt độ cao nhất</span>
+            <b class="rs-value amber"><span id="repTempMax">--</span><small>°C</small></b>
+            <span class="rs-sub">Trong bộ đệm</span>
+          </div>
+          <div class="report-stat">
+            <span class="rs-label">Đèn sưởi chạy</span>
+            <b class="rs-value amber" id="repLampPct">0%</b>
+            <span class="rs-sub">Tỉ lệ thời gian ON · CH3</span>
+          </div>
+        </div>
+
+        <section class="panel report-chart-panel">
+          <div class="panel-head">
+            <div><h2>Diễn biến nhiệt độ &amp; độ ẩm</h2><p>Toàn bộ bộ đệm telemetry</p></div>
+            <div class="legend">
+              <span><i class="lg hum"></i>Độ ẩm (%RH)</span>
+              <span><i class="lg temp"></i>Nhiệt độ (°C)</span>
+              <span><i class="lg dash"></i>Ngưỡng bơm &amp; quạt</span>
+              <span><i class="lg cold"></i>Ngưỡng sưởi</span>
+            </div>
+          </div>
+          <canvas id="repChart"></canvas>
+        </section>
+
+        <section class="panel export-panel">
+          <div class="panel-head">
+            <div><h2>Xuất dữ liệu</h2><p>Tải về máy để lưu trữ hoặc phân tích.</p></div>
+          </div>
+          <div class="export-row">
+            <button class="btn" id="btnExpTelemetry">
+              <svg class="ic"><use href="#i-download"></use></svg>CSV · Lịch sử telemetry
+            </button>
+            <button class="btn ghost" id="btnExpAlerts">
+              <svg class="ic"><use href="#i-download"></use></svg>CSV · Cảnh báo
+            </button>
+            <button class="btn ghost" id="btnExpAll">
+              <svg class="ic"><use href="#i-download"></use></svg>JSON · Toàn bộ
+            </button>
+          </div>
+        </section>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- ========================= CÀI ĐẶT ========================== -->
+      <!-- ============================================================ -->
+      <section class="page" id="page-settings">
+        <div class="page-title">
+          <div>
+            <h1>Cài đặt</h1>
+            <p>Cấu hình Firebase, ngưỡng điều khiển và thiết bị hiển thị.</p>
+          </div>
+        </div>
+
+        <div class="settings-grid">
+          <div class="settings-col">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Thiết bị hiển thị</h2><p>Chọn bố cục phù hợp với màn hình đang dùng.</p></div>
+              </div>
+              <div class="seg wide" id="displaySeg">
+                <button class="seg-btn active" data-display="laptop"><svg class="ic"><use href="#i-monitor"></use></svg>Laptop</button>
+                <button class="seg-btn" data-display="phone"><svg class="ic"><use href="#i-cpu"></use></svg>Phone</button>
+              </div>
+              <p class="block-hint">Đang sử dụng chế độ: <b id="dispModeText">Laptop / Desktop</b></p>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Cấu hình Firebase</h2><p>Kết nối Realtime Database dùng chung với HMI.</p></div>
+                <span class="chip ok" id="fbChip"><i class="ht-dot ok"></i><span id="fbChipText">Trực tuyến</span></span>
+              </div>
+
+              <div class="form-grid">
+                <label class="f">
+                  <span>Database URL</span>
+                  <input id="setUrl" placeholder="https://ten-project-default-rtdb.firebaseio.com">
+                </label>
+                <label class="f">
+                  <span>Database secret (để trống nếu rules mở)</span>
+                  <input id="setSecret" type="password" placeholder="không bắt buộc">
+                </label>
+                <div class="form-row">
+                  <label class="f">
+                    <span>Mã thiết bị HMI</span>
+                    <input id="setDevice" placeholder="vuon-1">
+                  </label>
+                  <label class="f">
+                    <span>Region</span>
+                    <input id="setRegion" value="asia-southeast1" readonly>
+                  </label>
+                </div>
+              </div>
+
+              <div class="settings-meta">
+                <div><span>Trạng thái</span><b id="setStatus">--</b></div>
+                <div><span>Thiết bị</span><b id="setDeviceText">--</b></div>
+              </div>
+
+              <div class="row">
+                <button class="btn" id="btnSaveCfg"><svg class="ic"><use href="#i-check"></use></svg>Lưu &amp; kiểm tra</button>
+                <button class="btn ghost" id="btnMock"><svg class="ic"><use href="#i-bolt"></use></svg>Dùng dữ liệu DEMO</button>
+              </div>
+              <p class="hint" id="cfgHint"></p>
+            </section>
+
+
+          </div>
+
+          <div class="settings-col">
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Ngưỡng điều khiển (AUTO)</h2><p>Áp dụng cho HMI sau khi đồng bộ.</p></div>
+              </div>
+              <div class="threshold-list">
+                <div class="threshold-row"><span>Bơm BẬT khi RH &lt;</span><input id="setRhOn" type="number" step="1"><em>%RH</em></div>
+                <div class="threshold-row"><span>Bơm TẮT khi RH ≥</span><input id="setRhOff" type="number" step="1"><em>%RH</em></div>
+                <div class="threshold-row"><span>Quạt BẬT khi T ≥</span><input id="setFanOn" type="number" step="1"><em>°C</em></div>
+                <div class="threshold-row"><span>Quạt TẮT khi T &lt;</span><input id="setFanOff" type="number" step="1"><em>°C</em></div>
+                <div class="threshold-row"><span>Đèn sưởi BẬT khi T &lt;</span><input id="setHeatOn" type="number" step="1"><em>°C</em></div>
+                <div class="threshold-row"><span>Đèn sưởi TẮT khi T ≥</span><input id="setHeatOff" type="number" step="1"><em>°C</em></div>
+                <div class="threshold-row"><span>Watchdog bơm tối đa</span><input id="setPumpMax" type="number" step="10" min="30"><em>giây</em></div>
+                <div class="threshold-row"><span>Watchdog đèn tối đa</span><input id="setHeatMax" type="number" step="10" min="30"><em>giây</em></div>
+                <div class="threshold-row"><span>Failsafe timeout</span><input id="setFailsafe" type="number" step="1" min="1"><em>chu kỳ</em></div>
+              </div>
+              <button class="btn block" id="btnSyncCfg"><svg class="ic"><use href="#i-db"></use></svg>Đồng bộ cấu hình sang HMI</button>
+              <div class="settings-meta">
+                <div><span>ACK gần nhất</span><b id="syncAckSettings">--</b></div>
+                <div><span>SEQ</span><b id="syncSeq">--</b></div>
+                <div><span>Đối chiếu</span><b id="syncCompare">--</b></div>
+              </div>
+              <p class="block-hint" id="syncState">Chưa đồng bộ.</p>
+              <button class="link-btn settings-link" id="btnOpenConnection" type="button">
+                Mở trang chẩn đoán kết nối<svg class="ic"><use href="#i-arrow"></use></svg>
+              </button>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Cảnh báo âm thanh</h2><p>Bíp khi xuất hiện cảnh báo khẩn cấp.</p></div>
+              </div>
+              <div class="row">
+                <button class="btn" id="btnSound2"><svg class="ic"><use href="#i-sound"></use></svg><span id="soundBtnText">Bật</span></button>
+                <button class="btn ghost" id="btnTestSound"><svg class="ic"><use href="#i-bolt"></use></svg>Test</button>
+              </div>
+              <p class="block-hint">Trạng thái: <b id="soundState2">Chưa bật</b></p>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div><h2>Rules mẫu</h2><p>Dán vào Realtime Database → Rules.</p></div>
+              </div>
+              <pre class="codeblock" id="rulesCode">{
+  "rules": {
+    "hmi": {
+      "$device": {
+        ".read": true,
+        ".write": true,
+        "logs": { ".indexOn": ["ts"] },
+        "history": { ".indexOn": ["ts"] }
+      }
+    }
+  }
+}</pre>
+              <div class="rules-actions">
+                <button class="btn ghost small" id="btnCopyRules" type="button">
+                  <svg class="ic"><use href="#i-db"></use></svg>Sao chép
+                </button>
+                <a class="btn small" id="btnOpenRules"
+                   href="https://console.firebase.google.com/project/ktma-f2871/database/ktma-f2871-default-rtdb/rules"
+                   target="_blank" rel="noopener">
+                  <svg class="ic"><use href="#i-arrow"></use></svg>Mở Console
+                </a>
+              </div>
+              <p class="hint">Chỉ dùng khi chạy thử LAN/nhà kính. Khi mở Internet hãy bật Authentication.</p>
+            </section>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="modal" class="modal hidden">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h3 id="modalTitle">Tiêu đề</h3>
+      <button class="iconbtn" id="modalClose" aria-label="Đóng"><svg class="ic"><use href="#i-x"></use></svg></button>
+    </div>
+    <div id="modalBody" class="sheet-body"></div>
+    <div class="actions">
+      <button class="btn ghost" id="modalCancel">Hủy</button>
+      <button class="btn" id="modalSave">Lưu</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
