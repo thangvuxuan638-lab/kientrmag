@@ -1,3 +1,8 @@
+https://thangvuxuan638-lab.github.io/kientrmag/
+
+
+
+
 # AGRI ERP · Web + HMI qua Firebase
 
 Hệ thống 2 phần dùng chung 1 Firebase Realtime Database:
